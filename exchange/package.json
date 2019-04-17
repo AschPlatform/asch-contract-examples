@@ -1,0 +1,51 @@
+{
+  "name": "asch-ex-contract2",
+  "version": "1.0.0",
+  "description": "Contract source code of asch-ex",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "sqf",
+  "license": "ISC",
+  "dependencies": {
+    "asch-contract-core": "~0.4.0",
+    "asch-contract-tslint": "~0.4.0",
+    "asch-contract-types": "~0.4.0"
+  },
+  "devDependencies": {
+    "@types/jest": "24.0.11",
+    "jest": "24.7.1",
+    "ts-jest": "24.0.2",
+    "ts-node": "8.1.0",
+    "typescript": "3.4.3"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    },
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "collectCoverage": true,
+    "coverageReporters": [
+      "html",
+      "text-summary"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "mock.js"
+    ]
+  },
+  "types": "asch-contract-types"
+}

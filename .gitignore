@@ -1,0 +1,12 @@
+node_modules
+coverage
+.nyc_output
+.DS_Store
+*.log
+dist
+compiled
+.awcache
+.rpt2_cache
+package-lock.json
+.data
+.logs
