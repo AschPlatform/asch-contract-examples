@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Hello Contract Frontend</title>
+  <meta charset="utf-8" />
+</head>
+
+<body>
+  <label>Address</label><br />
+  <input type="text" id="addressInput" disabled style="width: 300px;" /><br />
+
+  <label>Pay Times</label><br />
+  <input type="text" id="payTimesInput" disabled /><br />
+  <label>Total:</label><br />
+  <input type="text" id="totalInput" disabled />
+
+  <br /><br />
+
+  <input type="text" id="payTokenInput" placeholder="input token" />
+  <input type="text" id="payAmountInput" placeholder="input amount" />
+  <button id="payButton">Pay To Contract</button>
+
+  <br /><br />
+
+  <input type="text" id="setKeyInput" placeholder="input key" />
+  <input type="text" id="setValueInput" placeholder="input value" />
+  <button id="setButton">Set</button>
+
+  <br /><br />
+
+  <input type="text" id="getKeyInput" placeholder="input key" />
+  <input type="text" id="getValueInput" disabled />
+  <button id="getButton">Get</button>
+
+  <script type="text/javascript">
+    const CONTRACT_NAME = 'hello-1'
+
+    const app = {
+      aschPay: null,
+      AschWeb: null,
+      contract: null,
+    }
+
+    function setValue(input, value) {
+      document.getElementById(input).value = value
+    }
+
+    function getValue(input) {
+      return document.getElementById(input).value
+    }
+
+    function bindClick(id, handler) {
+      document.getElementById(id).onclick = handler
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    async function initAschPay(aschPay) {
+      app.aschPay = aschPay
+      app.AschWeb = aschPay.AschWeb
+      app.contract = await aschPay.createContractFromName(CONTRACT_NAME)
+      app.contract.gasLimit = 100000
+      app.contract.enablePayGasInXAS = true
+    }
+
+    async function init() {
+      await sleep(500)
+      if (window.aschPay) {
+        await initAschPay(window.aschPay)
+      } else {
+        await sleep(1000)
+        if (!window.aschPay) throw new Error('AschPay not ready')
+        await initAschPay(window.aschPay)
+      }
+    }
+
+    function onPayClick() {
+      const token = getValue('payTokenInput')
+      const amount = getValue('payAmountInput')
+      app.contract
+        .pay(token, amount)
+        .then(() => {
+          alert(`success`)
+        })
+        .catch((error) => {
+          alert(`failed: ${error}`)
+        })
+    }
+
+    function onSetClick() {
+      const key = getValue('setKeyInput')
+      const value = getValue('setValueInput')
+      app.contract
+        .set(key, value)
+        .then(() => {
+          alert('success')
+        })
+        .catch((error) => {
+          alert(`failed: ${error}`)
+        })
+    }
+
+    function onGetClick() {
+      const key = getValue('getKeyInput')
+      app.contract
+        .get(key)
+        .then((result) => {
+          console.log('get key result', result)
+          setValue('getValueInput', result.data)
+        })
+        .catch((error) => {
+          alert(`failed: ${error}`)
+        })
+    }
+
+    function queryContract() {
+      Promise.all([
+        app.contract.getPayTimes(),
+        app.contract.getTotal()
+      ]).then((results) => {
+        console.log('query contract results', results)
+        setValue('payTimesInput', results[0].data)
+        setValue('totalInput', results[1].data)
+      }).catch((error) => {
+        console.log('failed to query contract:', error)
+      })
+    }
+
+    async function main() {
+      await init()
+      console.log('got aschPay', app.aschPay)
+      console.log('defaultAccount', app.aschPay.defaultAccount)
+      setValue('addressInput', app.aschPay.defaultAccount.address)
+
+      bindClick('payButton', onPayClick)
+      bindClick('setButton', onSetClick)
+      bindClick('getButton', onGetClick)
+
+      setInterval(queryContract, 5000)
+    }
+
+    window.onload = () => {
+      main()
+    }
+  </script>
+</body>
+
+</html>

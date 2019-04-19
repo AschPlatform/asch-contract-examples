@@ -1,4 +1,4 @@
-import '../mock'
+import '../../mock'
 import PixelContract from '../contract/pixel'
 
 describe('PixelContract', () => {

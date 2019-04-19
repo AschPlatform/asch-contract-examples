@@ -9,7 +9,7 @@ interface CancelParams {
   ids: string[]
 }
 
-interface Order {
+export interface Order {
   id: string
   contract: string
   pair: string
@@ -26,7 +26,7 @@ interface Order {
   signature: string
 }
 
-interface DealOrder {
+export interface DealOrder {
   makerOrders: Order[]
   takerOrder: Order
   takeAmount: bigint
@@ -38,7 +38,7 @@ interface DealResult {
   totalDealBase: bigint
 }
 
-export class AschEX extends AschContract {
+export default class AschEX extends AschContract {
   //============================================================================
   // Data members
   //============================================================================
@@ -82,7 +82,7 @@ export class AschEX extends AschContract {
     assert(balances, 'Account not found')
 
     const balance = balances![token] || BigInt(0)
-    assert(balance > amount, 'Insuffient found')
+    assert(balance > amount, 'Insuffient balance')
     this.transfer(address, amount, token)
     balances![token] = balance - amount
   }
